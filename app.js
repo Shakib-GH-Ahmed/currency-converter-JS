@@ -1,4 +1,3 @@
-
 const API_KEY = '835f520ca08f438cb16682f91b7513bb';
 const BASE_URL = 'https://api.currencyfreaks.com/v2.0/rates/latest';
 
