@@ -1,6 +1,3 @@
-const API_KEY = '835f520ca08f438cb16682f91b7513bb';
-const BASE_URL = 'https://api.currencyfreaks.com/v2.0/rates/latest';
-
 const dropdowns = document.querySelectorAll(".dropdown select");
 const btn = document.querySelector("form button");
 const fromCurr = document.querySelector(".from select");
@@ -34,7 +31,6 @@ const updateFlag = (element) => {
 };
 
 const swapCurrencies = () => {
-  // Get current values
   const fromValue = fromCurr.value;
   const toValue = toCurr.value;
   
@@ -67,7 +63,8 @@ const updateExchangeRate = async () => {
   msg.innerText = "Getting exchange rate...";
   
   try {
-    const url = `${BASE_URL}?apikey=${API_KEY}`;
+    // USING YOUR CORRECT VERCEL URL
+    const url = `https://currency-converter-js-plum.vercel.app/api/convert?from=${from}&to=${to}&amount=${amtVal}`;
     const response = await fetch(url);
     
     if (!response.ok) {
@@ -76,32 +73,15 @@ const updateExchangeRate = async () => {
     
     const data = await response.json();
     
-    if (data && data.rates) {
-      const rates = data.rates;
-
-      if (!rates[from] || !rates[to]) {
-        msg.innerText = `Error: Unable to get rates for ${from} or ${to}.`;
-        return;
-      }
-
-      let result;
-      if (from === 'USD') {
-        result = amtVal * parseFloat(rates[to]);
-      } else if (to === 'USD') {
-        result = amtVal / parseFloat(rates[from]);
-      } else {
-        const amountInUSD = amtVal / parseFloat(rates[from]);
-        result = amountInUSD * parseFloat(rates[to]);
-      }
-         
-      msg.innerText = `${amtVal} ${from} = ${result.toFixed(2)} ${to}`;
-      
+    if (data.success) {
+      msg.innerText = `${amtVal} ${from} = ${data.result.toFixed(2)} ${to}`;
     } else {
-      msg.innerText = "Error: Invalid data received from API.";
+      msg.innerText = "Error: " + data.error;
     }
+    
   } catch (err) {
     console.error("API fetch error:", err);
-    msg.innerText = "Failed to fetch exchange rates. Please check your API key and connection.";
+    msg.innerText = "Failed to fetch exchange rates. Please try again.";
   }
 };
 
